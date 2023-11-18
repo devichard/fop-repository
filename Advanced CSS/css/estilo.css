@@ -1,0 +1,424 @@
+/**Seletores iguais, exceção important****************************
+Herança e especificidade */
+
+/* #pagina p {
+    color: blue !important;
+}
+
+#pagina p {
+    color: red;
+} */
+
+/* Se um seletor for mais específico que outro a regra mais específica será aplicada
+(terá precedência sobre regras mais gerais)
+*/
+/*
+* { /*4*
+    color: red;
+}
+
+h2 { /*3*
+    color: blue; 
+}
+
+h2#amarelo { /*2*
+    color: yellow;
+}
+
+h2.verde { /*1*
+    color: green;
+}
+
+
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    padding: 5px 20px;
+    background: url(../imagens/seta.png) no-repeat left center;
+}
+
+/********************************************
+NAVEGAÇÃO VERTICAL
+*******************************************
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul a {
+    /*border: 1px solid red;
+    width: 200px;
+    height: 40px;
+    display: block;
+    color: #000;
+    text-decoration: none;
+    text-indent: 40px;
+    line-height: 40px;
+    background: #F7B600 url(../imagens/menu.png) no-repeat left bottom;
+}
+
+a:hover {
+    background-position: right bottom;
+    background-color: #F99200;
+    color: #FFF;
+}
+
+#home #navegacao .home a,
+#sobre #navegacao .sobre a,
+#servicos #navegacao .servicos a,
+#noticias #navegacao .noticias a,
+#contato #navegacao .contato a {
+    background-position: right bottom;
+    background-color: #F99200;
+    color: #FFF;
+}
+*************************************************
+********NAVEGAÇÃO HORIZONTAL**********
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 720px;
+    background: #159cb0 url(../imagens/fundo-horizontal.png) repeat-x;
+    float: left;
+}
+
+ul li {
+    float: left;
+}
+
+ul a {
+    display: block;
+    padding: 0 2em;
+    line-height: 2em;
+    text-decoration: none;
+    color: #FFF;
+    background: url(../imagens/divisor.png) repeat-y left top;
+}
+
+ul .primeiro a {
+    background: none;
+}
+
+ul a:hover {
+    color: #085662;
+    background: #44cade;
+}
+
+#home #navegacao .home a,
+#sobre #navegacao .sobre a,
+#servicos #navegacao .servicos a,
+#noticias #navegacao .noticias a,
+#contato #navegacao .contato a {
+    background-position: right bottom;
+    background-color: #F99200;
+    color: #FFF;
+}
+
+*/
+
+/********************************************
+Barra de navegação com abas 
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 720px;
+}
+
+ul li {
+    float: left;
+    background: url(../imagens/aba-direita.png) no-repeat top right;
+}
+
+li a {
+    display: block;
+    padding: 0 2em;
+    line-height: 3em;
+    text-decoration: none;
+    background: url(../imagens/aba-esquerda.png) no-repeat top left;
+    color: #FFF;
+}
+
+ul a:hover {
+    color: #894A1F;
+}
+
+ul #atual {
+    background: url(../imagens/aba-direita-atual.png) no-repeat top right;
+}
+
+ul #atual a {
+    background: url(../imagens/aba-esquerda-atual.png) no-repeat top left;
+}
+
+**************************
+********LAYOUTS************
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    background: #F2F2F2;
+}
+
+#container { 
+    border: 1px solid red;
+    width: 960px; /*720px*
+    margin: 0 auto;
+    background: #FFF url(../imagens/coluna.png) repeat-y left top;
+    min-width: 820px;
+    /*max-width: 960px, max-height, min-height*
+}
+
+#marca {
+    width: 100%;
+    height: 200px;
+    background: #225992 url(../imagens/cabecalho2.jpg) no-repeat center;
+    text-align: center;
+    line-height: 200px;
+}
+
+#imagem {
+    width: 90%;
+    overflow: hidden;
+}
+
+
+#conteudo {
+    width: 75%; /*520px -> 74.28*
+    float: right;
+}
+
+#conteudo-principal {
+    width: 63%; /*320 * 100 : 500 = 64% *
+    float: left;
+}
+
+img.img-noticia {
+    width: 94%;
+    padding: 2%;
+    max-width: 600px;
+}
+#conteudo-secundario {
+    width: 34%; /*180 * 100 : 500 = 36% *
+    float: right;
+    background: #d1d1d1;
+}
+
+#conteudo-secundario h1,
+#conteudo-secundario h2,
+#conteudo-secundario h3,
+#conteudo-secundario p {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#navegacao {
+    width: 23%; /*180px -> 25.71*
+    float: left;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    /* background: #D1D1D1; *
+}
+
+#navegacao ul {
+    list-style: none;
+}
+
+#navegacao li a {
+    text-decoration: none;
+}
+
+#rodape {
+    clear: both;
+    background: #c4c4c4;
+    padding: 5px;
+}
+
+
+/*******************Estilizando tabelas******************
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+table {
+    width: 600px;
+    border-collapse: separate; /*collapse*
+}
+
+th, td {
+    padding: 7px;
+}
+
+th {
+    text-transform: uppercase;
+    border-color: 1px solid #999;
+    border-bottom: 1px solid #111;
+    text-align: left;
+    font-size: 90%;
+    letter-spacing: 0.1em;
+}
+
+tr.alternado {
+    background-color: #efefef;
+}
+
+.numero {
+    text-align: right;
+}
+
+tr:hover {
+    background-color: #c6e3e5;
+}
+
+/******Estilizando Formulários**********
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+fieldset {
+    margin: 1em 0;
+    padding: 1em;
+    border: 1px solid #ccc;
+    background: #f8f8f8;
+}
+
+legend {
+    font-weight: bold;
+}
+
+label {
+    display: block;
+    cursor: pointer;
+}
+
+input { /*input[type="radio"] *
+    width: 20em;
+}
+
+textarea {
+    width: 20em;
+    height: 10em;
+}
+
+input.radio, input.checkbox, input.submit {
+    width: auto;
+}
+.radio {
+    margin-right: 1em;
+}
+
+/********************************************
+Estilizando Formulários parte 02 
+
+body {
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    background: #643d87 url(../imagens/fundo.jpg) no-repeat top center;
+}
+
+#container {
+    width: 400px;
+    height: 300px;
+    background-color: rgba(255, 255, 255, 0.3);
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 120px;
+    text-align: center;
+}
+
+#container img {
+    width: 120px;
+    height: 120px;
+    margin-top: -60px;
+    margin-bottom: 30px;
+}
+
+input {
+    height: 40px;
+    width: 80%;
+    font-size: 18px;
+    margin-bottom: 10px;
+    background-color: #FFF;
+    padding-left: 40px;
+    border: none;
+    background-repeat: no-repeat;
+    background-position: 10px;
+}
+
+input.email {
+    background-image: url(../imagens/icone-usuario.png);
+}
+
+input.senha {
+    background-image: url(../imagens/icone-cadeado.png);
+}
+
+input.submit {
+    color: #FFF;
+    background-color: #F79300;
+    border: 2px solid #db7d00;
+    padding: 5px 20px;
+    height: 45px;
+    width: 90%;
+
+    background: -webkit-linear-gradient(to bottom, #FAA600, #F68A00);
+    background: -moz-linear-gradient(to bottom, #FAA600, #F68A00);
+    background: -o-linear-gradient(to bottom, #FAA600, #F68A00);
+    background: linear-gradient(to bottom, #FAA600, #F68A00);
+}
+
+
+****************************************
+Arredondamento com imagens*/
+
+.caixa {
+    width: 400px;
+    background: #DEDEDE url(../imagens/fundo-arredondamento.png) repeat-y;
+}
+
+.caixa h2 {
+    padding: 10px 20px 0 20px;
+    background: url(../imagens/topo2.png) no-repeat left top;
+}
+
+.caixa p {
+    padding: 0 20px;
+    margin-bottom: 0;
+}
+
+.caixa .ultimo {
+    background: url(../imagens/baixo2.png) no-repeat left bottom;
+    width: 400px;
+    height: 24px;
+}
+
+/*
+.caixa {
+    width: 400px;
+    background: #DEDEDE url(../imagens/topo2.png) no-repeat left top;
+}
+
+.caixa h2 {
+    padding: 10px 20px 0 20px;
+}
+
+.caixa p {
+    padding: 0 20px 20px 20px;
+    background: url(../imagens/baixo2.png) no-repeat left bottom;
+}
+*/

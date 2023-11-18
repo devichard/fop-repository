@@ -1,0 +1,135 @@
+/*#caixa {
+    width: 300px;
+    height: 300px;
+    background: url("../imagens/camera.png");
+    background: linear-gradient(to right, blue, red, yellow, violet);
+    background: radial-gradient(red, green, yellow);
+}
+
+#caixa h1 {
+    /*background: rgba(255, 255, 255, 0.5);
+}
+
+#caixa {
+    width: 300px;
+    height: 300px;
+    background: #b9c941;
+    padding: 50px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 20px 90px;
+    -moz-border-radius: 20px 90px;
+    border-radius: 20px 90px;
+}
+
+#caixa2 {
+    width: 300px;
+    height: 300px;
+    background: #b9c941;
+    -webkit-border-radius: 20px 90px;
+    -moz-border-radius: 20px 90px;
+    border-radius: 20px 90px;
+}*/
+
+/*.arredondamento {
+    border-radius: 150px;
+}
+
+#caixa {
+    width: 300px;
+    height: 300px;
+    padding: 8px;
+    margin: 20px;
+    background: #009670;
+    box-shadow: 20px 20px 10px rgba(0, 0, 0, 0.4); 
+}
+
+#caixa h1 {
+    color: white;
+    text-shadow: 4px 4px 5px terceiro valor define o blur (sombra realista) rgba(0, 0, 0, 0.4);
+} 
+
+
+*********************
+**********Animações*/
+
+@keyframes animacao-caixa {
+    from {/*Estado Inicial*/
+        background: red;
+        border-radius: 0px;
+        top: 0;
+        left: 0;
+    }
+    to {/*Estado Final*/
+        background: yellow;
+        border-radius: 300px;
+        top: 200px;
+        left: 200px;
+    }
+}
+
+/*
+@-webkit-keyframes animacao-caixa {
+    from {*Estado Inicial*
+        background: red;
+    }
+    to {/*Estado Final*
+        background: yellow;
+    }
+}
+
+@-moz-keyframes animacao-caixa {
+    from {/*Estado Inicial*
+        background: red;
+    }
+    to {/*Estado Final*
+        background: yellow;
+    }
+}
+
+@-o-keyframes animacao-caixa {
+    from {/*Estado Inicial*
+        background: red;
+    }
+    to {/*Estado Final*
+        background: yellow;
+    }
+}
+
+#caixa {
+    width: 300px;
+    height: 300px;
+    background: red;
+    position: relative;
+
+    -webkit-animation-name: animacao-caixa;
+    -moz-animation-name: animacao-caixa;
+    -o-animation-name: animacao-caixa;
+    animation-name: animacao-caixa;
+    animation-duration: 5s;
+    animation-delay: 2s;
+    animation-iteration-count: 2;
+    animation-direction: alternate;
+
+    -webkit-animation: animacao-caixa 5s 3s 2 alternate;
+    -moz-animation: animacao-caixa 5s 3s 2 alternate;
+    -o-animation: animacao-caixa 5s 3s 2 alternate;
+    animation: animacao-caixa 5s 3s 2 alternate;
+}
+
+************************************
+Transições */
+
+#caixa {
+    width: 300px;
+    height: 300px;
+    background: orange;
+}
+
+#caixa:hover {
+    width: 500px;
+    background: yellow;
+    /*transition: width 3s, background 3s ; */
+    transition: all 3s ;
+}
