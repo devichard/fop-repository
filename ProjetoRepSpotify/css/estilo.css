@@ -11,3 +11,14 @@ body {
                 linear-gradient(50deg, #FF4169, #7C26F8);
                 background-attachment: fixed;
 }
+
+/* Barra de navegação
+--------------------------------------- */
+nav.navbar-transparente {
+    padding: 15px 0;
+    background: rgba(0, 0, 0, 6);
+}
+
+.navbar-nav .nav-link {
+    color: red;
+}
