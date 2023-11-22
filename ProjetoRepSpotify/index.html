@@ -81,23 +81,48 @@
     </header>
     <!-- Fim Cabeçalho -->
 
-    <section id="home" class="d-flex">
-      <!-- Início textos no FE (Front End) Home -->
+    <section id="home" class="d-flex">  <!-- Início textos no FE (Front End) Home -->
       <div class="container align-self-center">
         <div class="row">
           <div class="col-md-12 capa">
-            <h1>Música para todos</h1>
-            <a href="" class="btn btn-custom btn-roxo">
-              Aproveite o Spotify Free
-            </a>
-            <a href="" class="btn btn-custom btn-branco"> <!-- Poderia usar o btn(tamanho) -->
-              Obter Spotify Premium
-            </a>
+            
+            <div id="carousel-spotify" class="carousel slide" data-ride="carousel" style="border: 2px;">
+              <div class="carousel-inner"> <!-- Inner -->
+
+                <div class="carousel-item">
+                  <h1>Música para todos</h1>
+                  <a href="" class="btn btn-custom btn-roxo">
+                    Aproveite o Spotify Free
+                  </a>
+                  <a href="" class="btn btn-custom btn-branco"> <!-- Poderia usar o btn(tamanho) -->
+                    Obter Spotify Premium
+                  </a>
+                </div>
+
+                <div class="carousel-item active">
+                  <h1>As melhores rádios</h1>
+                  <a href="" class="btn btn-lg btn-custom btn-branco"> <!-- Poderia usar o btn(tamanho) -->
+                      <i class="fa-solid fa-music 2x" style="margin-right: 10px;"></i>Ouça agora
+                  </a>
+                </div>
+
+              </div> <!-- Inner -->
+
+              <!-- Início Controles -->
+              <a href="#carousel-spotify" class="carousel-control-prev" data-slide="prev">
+                <i class="fa-solid fa-chevron-left fa-3x"></i>
+              </a>
+
+              <a href="#carousel-spotify" class="carousel-control-next" data-slide="next">
+                <i class="fa-solid fa-chevron-right fa-3x"></i>
+              </a>
+              <!-- Fim Controles -->
+            </div>
+
           </div>
         </div>
       </div>
-    </section>
-    <!-- Fim dos textos FE -->
+    </section>     <!-- Fim dos textos FE -->
 
     <section id="servicos" class="caixa">       <!-- Início serviços -->
       <div class="container">
