@@ -19,12 +19,11 @@ var cronometro = setInterval(function() {
         if(tempo < 0) {
                 clearInterval(cronometro)
                 clearInterval(criaMosca)
+                window.location.href = vitoria.html
              alert('Vitória!')   
         } else {
                 document.getElementById('cronometro').innerHTML = tempo
         }
-        
-
 }, 1000)
 
 function posicaoRandomica() {
