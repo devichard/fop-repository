@@ -2,8 +2,21 @@ var altura = 0
 var largura = 0
 var vidas = 1
 var tempo = 15
+var criaMosquitoTempo = 1500
 
-alert(window.location.href)
+var nivel = window.location.search
+nivel = nivel.replace('?', '')
+
+if (nivel === 'normal') {
+        //1500
+        criaMosquitoTempo = 1500
+} else if (nivel === 'dificil') {
+        //1000
+        criaMosquitoTempo = 1000
+} else if (nivel === 'godmode') {
+        //750
+        criaMosquitoTempo = 750
+}
 
 function ajustaTamanhoTela() {
         altura = window.innerHeight
