@@ -3,6 +3,8 @@ var largura = 0
 var vidas = 1
 var tempo = 15
 
+alert(window.location.href)
+
 function ajustaTamanhoTela() {
         altura = window.innerHeight
         largura = window.innerWidth
