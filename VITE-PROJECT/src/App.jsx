@@ -1,27 +1,34 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { TrashIcon } from '@radix-ui/react-icons';
 
 function App() {
   const [tasks, setTasks] = useState([
-    {
-      id: "id-" + Date.now() + Math.random(),
-      title: "Primeira Nota",
-      description: "Descrição da primeira nota",
-      done: false,
-    },
-    {
-      id: "id-" + Date.now() + Math.random(),
-      title: "Segunda Nota",
-      description: "Descrição da segunda nota",
-      done: false,
-    },
+
   ]);
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+
   const [isModalOpen, setModalOpen] = useState(false);
+
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+
+  const saveTasks = (tasks) => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  };
+
+  const getTasks = () => {
+    const tasksJSON = localStorage.getItem("tasks");
+    return tasksJSON ? JSON.parse(tasksJSON) : [];
+
+    //não vai avaliar se é verdadeiro (true)
+    //mas sim vai avaliar se é truthy ("tipo verdadeiro")
+
+    //false - 0, NaN, null, undefined, "" => falsy
+  };
+
   const addNewTask = () => {
     const currentTasks = [...tasks];
     const newTask = {
@@ -34,12 +41,36 @@ function App() {
     currentTasks.unshift(newTask);
 
     setTasks(currentTasks);
+    saveTasks(currentTasks);
 
     setModalOpen(false);
     setTitle("");
     setDescription("");
     
-  }
+  };
+
+  const deleteTask = (index) => {
+    const currentTasks = [...tasks];
+    currentTasks.splice(index, 1)
+    setTasks(currentTasks);
+    saveTasks(currentTasks);
+    //deletar tarefa
+  };
+
+  const changeTaskStatus = (index) => {
+    const currentTasks = [...tasks];
+    const taskToUpdate = currentTasks.at(index);
+    taskToUpdate.done = !taskToUpdate.done;
+    currentTasks.splice(index, 1, taskToUpdate);
+    setTasks(currentTasks);
+    saveTasks(currentTasks);
+  };
+
+  useEffect(() => {
+    const savedTasks = getTasks();
+    setTasks(savedTasks); //o que executar
+  }, []); //vai executar somente uma vez.
+  
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-950">
@@ -52,13 +83,33 @@ function App() {
             + Nova Nota
           </button>
         </div>
-        <div className="flex flex-col divide-y divide-slate-700 flex-grow bg-slate-900 rounded-lg px-5 py-2.5">
-          {tasks.map((task) => {
+        <div className="flex flex-col divide-y divide-slate-700 flex-grow bg-slate-900 rounded-lg px-6 py-2.5">
+          {tasks.map((task, index) => {
             return (
-              <div key={task.id} className="text-slate-200 text-sm py-2.5">
-                {/* <input type="checkbox" className="scale-125" /> */}
-                <p className="font-medium">{task.title}</p>
-                <p className="text-slate-400">{task.description}</p>
+              <div
+              key={task.id} 
+              className={`${
+                task.done ? "opacity-50" : "" }
+                flex items-center justify-between text-slate-200 text-sm py-2.5`}
+              >
+                <div className="flex gap-6">
+                  <input
+                  type="checkbox"
+                  className="scale-125"
+                  onChange={() => {
+                    changeTaskStatus(index);
+                  }}
+                  value={task.done}
+                  checked={task.done}
+                  />
+                  <div>
+                  <p className="font-medium">{task.title}</p>
+                  <p className="text-slate-400">{task.description}</p>
+                  </div>
+                </div>
+                <TrashIcon role="button" className="scale-125 text-red-400" onClick={() => {
+                  deleteTask(index)}}
+                  />
               </div>
             );
           })}
