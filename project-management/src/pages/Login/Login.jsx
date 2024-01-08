@@ -1,6 +1,10 @@
-import React from 'react'
+import React from 'react';
+import { Button } from "@/shadcn/components/ui/button";
 
 export default function Login() {
-  return <div>Login</div>
-
+  return (
+    <div>
+      <Button>Entrar</Button>
+    </div>
+  );
 }
