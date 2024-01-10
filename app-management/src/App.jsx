@@ -7,9 +7,13 @@ import Projects from "./pages/Projects/Projects";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
 import { ThemeProvider } from "./Providers/ThemeProvider";
+import { useAuthContext } from "./hooks/useAuthContext";
+import Loading from "./components/shared/Loading";
 
 function App() {
-  const user = undefined;
+  const { user, authIsReady } = useAuthContext();
+
+  if(!authIsReady) return <Loading />;
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -31,6 +35,7 @@ function App() {
               <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="*" element={<Signup />} />
               </Routes>
             )
           }

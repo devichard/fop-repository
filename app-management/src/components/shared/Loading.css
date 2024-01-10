@@ -1,0 +1,47 @@
+
+body {
+  background-color: #f9f9f9;
+  margin-top: 25px;
+}
+
+.col-sm-2 {
+  padding: 10px;
+  border-radius: 4px;
+  height: 125px;
+  margin-bottom: 10px;
+}
+
+.sp {
+  width: 32px;
+  height: 32px;
+  clear: both;
+  margin: 20px auto;
+}
+
+.sp-texture {
+    border: 1px #000 solid;
+    border-radius: 4px;
+    position: relative;
+    background: linear-gradient(45deg, transparent 49%, #000 50%, #000 50%, transparent 51%, transparent), linear-gradient(-45deg, transparent 49%, #000 50%, #000 50%, transparent 51%, transparent);
+    background-size: 16px 16px;
+    background-position: 0% 0%;
+    -webkit-animation: spTexture 1s infinite linear;
+    animation: spTexture 1s infinite linear;
+  }
+  
+  @-webkit-keyframes spTexture {
+    from {
+      background-position: 0px 0px;
+    }
+    to {
+      background-position: -16px 0px;
+    }
+  }
+  @keyframes spTexture {
+    from {
+      background-position: 0px 0px;
+    }
+    to {
+      background-position: -16px 0px;
+    }
+  }

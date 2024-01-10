@@ -1,17 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Logo from "../../assets/bg-blacklogo.svg";
 import { Link } from "react-router-dom";
+import { useSignup } from "@/hooks/useSignup";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import Logo from "@/components/shared/Logo";
+
 
 export default function Signup() {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { signup, error, isPending } = useSignup();
+
+  const handleSubmit = (evento) => {
+    evento.preventDefault();
+    signup(email, password, fullName);
+  };
+
   return (
     <div className="flex gap-20 h-screen w-full px-40 py-28">
       <div className="w-1/2 bg-muted rounded-xl p-10">
-          <div className="flex items-center gap-1">
-          <img className="h-10" src={Logo} alt="bg-blacklogo" />
-            <h2 className="text-2xl font-medium">Chard(<span className="text-primary">s</span>);</h2>
-          </div>
+        <Logo/>
         <h2 className="mt-10 text-4xl leading-10 font-medium">
           Transformando projetos em realidade, cuidando de cada detalhe.
         </h2>
@@ -31,20 +41,44 @@ export default function Signup() {
           <p className="mt-1 text-muted-foreground font-thin">
             Crie sua conta agora mesmo
           </p>
-          <form className="mt-10">
+          <form className="mt-10" onSubmit={handleSubmit}>
             <p className="text-muted-foreground mb-2.5">Nome Completo</p>
-            <Input type="text" />
+            <Input
+              type="text"
+              autoComplete="name"
+              value={fullName}
+              onChange={(evento) => setFullName(evento.target.value)}
+            />
             <p className="mt-5 text-muted-foreground mb-2.5">E-mail</p>
-            <Input type="email" />
+            <Input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(evento) => setEmail(evento.target.value)}
+            />
             <p className="mt-5 text-muted-foreground mb-2.5">Senha</p>
-            <Input type="password" />
-            <Button size="lg" className="text-sm w-full mt-10">
-              Criar minha conta
+            <Input
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(evento) => setPassword(evento.target.value)}
+            />
+            <Button
+              disabled={isPending}
+              size="lg"
+              className="text-sm w-full mt-10"
+            >
+              {isPending ? (
+                <ReloadIcon className="w-5 h-5 mr-2 animate-spin" />
+              ) : null}
+              {isPending ? "Criando a conta..." : "Criar minha conta"}
             </Button>
           </form>
           <div className="mt-10 flex justify-center gap-1 text-lg">
-          <p>Já tem uma conta?</p>
-          <Link to="/login" className="text-primary">Entre agora.</Link>
+            <p>Já tem uma conta?</p>
+            <Link to="/login" className="text-primary">
+              Entre agora.
+            </Link>
           </div>
         </div>
       </div>

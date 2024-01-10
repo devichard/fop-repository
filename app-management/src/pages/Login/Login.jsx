@@ -1,19 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Logo from "../../assets/bg-blacklogo.svg";
 import { Link } from "react-router-dom";
+import { useLogin } from "@/hooks/useLogin";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import Logo from "@/components/shared/Logo";
 
 export default function Login() {
+  const { login, isPending, error } = useLogin();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (evento) => {
+    evento.preventDefault();
+    login(email, password);
+  };
+
   return (
     <div className="flex gap-20 h-screen w-full px-40 py-28">
       <div className="w-1/2 bg-muted rounded-xl p-10">
-        <div className="flex items-center gap-1">
-          <img className="h-10" src={Logo} alt="bg-blacklogo" />
-          <h2 className="text-2xl font-medium">
-            Chard(<span className="text-primary">s</span>);
-          </h2>
-        </div>
+        <Logo/>
         <h2 className="mt-10 text-4xl leading-10 font-medium">
           Transformando projetos em realidade, cuidando de cada detalhe.
         </h2>
@@ -33,12 +39,27 @@ export default function Login() {
           <p className="mt-1 text-muted-foreground font-thin">
             Preencha os seus dados de acesso
           </p>
-          <form className="mt-10">
+          <form className="mt-10" onSubmit={handleLogin}>
             <p className="mt-5 text-muted-foreground mb-2.5">E-mail</p>
-            <Input type="email" />
+            <Input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(evento) => setEmail(evento.target.value)}
+            />
             <p className="mt-5 text-muted-foreground mb-2.5">Senha</p>
-            <Input type="password" />
-            <Button size="lg" className="text-sm w-full mt-10">
+            <Input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(evento) => setPassword(evento.target.value)}
+            />
+            <Button
+              size="lg"
+              className="text-sm w-full mt-10"
+              disabled={isPending}
+            >
+              {isPending ? <ReloadIcon className="w-4 h-4 mr-2 animate-spin" /> : null}
               Entrar na minha conta
             </Button>
           </form>
