@@ -11,6 +11,10 @@ const options = [
       route: "/projects",
       name: "Meus projetos",
     },
+    {
+      route: "/login",
+      name: "Login [TESTE]",
+    },
   ];
 
 export default function Sidebar() {
