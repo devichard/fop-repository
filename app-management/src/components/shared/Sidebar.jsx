@@ -1,12 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { ModeToggle } from "../mode-toggle";
 import { Button } from "../ui/button";
-import { ClockIcon, ExitIcon, PersonIcon } from "@radix-ui/react-icons";
+import {
+  CalendarIcon,
+  ChatBubbleIcon,
+  ClockIcon,
+  DashboardIcon,
+  ExitIcon,
+  FileTextIcon,
+  InfoCircledIcon,
+  PersonIcon,
+} from "@radix-ui/react-icons";
 import { useLogout } from "@/hooks/useLogout";
 import Logo from "./Logo";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import LabelSvg from "./Label";
 
 const userOptions = [
   {
@@ -25,18 +34,22 @@ const projectOptions = [
   {
     route: "/",
     name: "Dashboard",
+    icon: <DashboardIcon className="" />,
   },
   {
     route: "/tasks",
     name: "Tarefas",
+    icon: <FileTextIcon />,
   },
   {
     route: "/chats",
     name: "Conversas",
+    icon: <ChatBubbleIcon />,
   },
   {
     route: "/calendar",
     name: "Calendário",
+    icon: <CalendarIcon />,
   },
 ];
 
@@ -44,18 +57,22 @@ const labelOptions = [
   {
     route: "/",
     name: "Alta prioridade",
+    icon: <LabelSvg color="#F00" />,
   },
   {
     route: "/",
     name: "Média prioridade",
+    icon: <LabelSvg color="orange" />,
   },
   {
     route: "/",
     name: "Baixa prioridade",
+    icon: <LabelSvg color="#f7D372" />,
   },
   {
     route: "/",
-    name: "Aguardando Atividade",
+    name: "Em Standby",
+    icon: <LabelSvg color="#7fD372" />,
   },
 ];
 
@@ -76,9 +93,11 @@ export default function Sidebar() {
           <AvatarFallback className="bg-primary/50">AR</AvatarFallback>
         </Avatar>
         <div>
-        <p className="font-medium">{user.displayName}</p>
-        <p className="text-muted-foreground/50 text-sm font-medium">Membro Ruby</p></div>
-
+          <p className="font-medium">{user.displayName}</p>
+          <p className="text-muted-foreground/50 text-sm font-medium">
+            Membro Ruby
+          </p>
+        </div>
       </div>
 
       {userOptions.map((option) => (
@@ -92,12 +111,53 @@ export default function Sidebar() {
           <p className="text-md font-medium">{option.name}</p>
         </div>
       ))}
+
       <Separator className="my-4" />
-      <ModeToggle />
-      <Button variant="outline" onClick={logout}>
-        <ExitIcon className="w-4 h-4 mr-2" />
-        Sair da conta
-      </Button>
+
+      <h2 className="font-bold text-xl px-5 mb-5">Projetos</h2>
+
+      {projectOptions.map((option) => (
+        <div
+          key={option.route}
+          role="button"
+          className="px-5 py-1.5 flex items-center gap-2"
+          onClick={() => navigate(option.route)}
+        >
+          {option.icon}
+          <p className="text-md font-medium">{option.name}</p>
+        </div>
+      ))}
+
+      <Separator className="my-4" />
+
+      <h2></h2>
+
+      {labelOptions.map((option) => (
+        <div
+          key={option.route}
+          role="button"
+          className="px-5 py-1.5 flex items-center gap-2"
+          onClick={() => navigate(option.route)}
+        >
+          {option.icon}
+          <p className="text-md font-medium">{option.name}</p>
+        </div>
+      ))}
+
+      <Separator className="my-4" />
+
+      <div className="px-5">
+        {" "}
+        <Button size="noPadding" variant="ghost" onClick={logout} className="opacity-50">
+          <InfoCircledIcon className="w-4 h-4 mr-2" />
+          Suporte
+        </Button>
+
+        <Button size="noPadding" variant="ghost" onClick={logout} className="opacity-50">
+          <ExitIcon className="w-4 h-4 mr-2" />
+          Sair da conta
+        </Button>
+      </div>
     </div>
   );
 }

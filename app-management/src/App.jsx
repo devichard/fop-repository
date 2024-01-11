@@ -9,6 +9,7 @@ import Signup from "./pages/Signup/Signup";
 import { ThemeProvider } from "./Providers/ThemeProvider";
 import { useAuthContext } from "./hooks/useAuthContext";
 import Loading from "./components/shared/Loading";
+import Profile from "./pages/Profile/Profile";
 
 function App() {
   const { user, authIsReady } = useAuthContext();
@@ -24,7 +25,8 @@ function App() {
               <Sidebar />
               <div className="flex-grow">
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route exact path="/" element={<Home />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/projects" element={<Projects />} />
                   <Route path="*" element={<Home />} />
                 </Routes>
