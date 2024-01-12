@@ -55,22 +55,22 @@ const projectOptions = [
 
 const labelOptions = [
   {
-    route: "/",
+    route: "/a",
     name: "Alta prioridade",
     icon: <LabelSvg color="#F00" />,
   },
   {
-    route: "/",
+    route: "/b",
     name: "Média prioridade",
     icon: <LabelSvg color="orange" />,
   },
   {
-    route: "/",
+    route: "/c",
     name: "Baixa prioridade",
     icon: <LabelSvg color="#f7D372" />,
   },
   {
-    route: "/",
+    route: "/d",
     name: "Em Standby",
     icon: <LabelSvg color="#7fD372" />,
   },
@@ -82,7 +82,7 @@ export default function Sidebar() {
   const { user } = useAuthContext();
 
   return (
-    <div className="h-screen w-[200px] bg-accent">
+    <nav className="h-screen w-[200px] bg-accent border border-border">
       <div className="p-5">
         <Logo size="sm" />
       </div>
@@ -150,7 +150,7 @@ export default function Sidebar() {
         {" "}
         <Button size="noPadding" variant="ghost" onClick={logout} className="opacity-50">
           <InfoCircledIcon className="w-4 h-4 mr-2" />
-          Suporte
+          Central de Ajuda
         </Button>
 
         <Button size="noPadding" variant="ghost" onClick={logout} className="opacity-50">
@@ -158,6 +158,6 @@ export default function Sidebar() {
           Sair da conta
         </Button>
       </div>
-    </div>
+    </nav>
   );
 }

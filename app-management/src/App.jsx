@@ -10,9 +10,13 @@ import { ThemeProvider } from "./Providers/ThemeProvider";
 import { useAuthContext } from "./hooks/useAuthContext";
 import Loading from "./components/shared/Loading";
 import Profile from "./pages/Profile/Profile";
+import Chat from "./components/shared/Chat";
+import ChatButton from "./components/shared/ChatButton";
+import { useState } from "react";
 
 function App() {
   const { user, authIsReady } = useAuthContext();
+  const [chatIsOpen, setChatIsOpen] = useState(false);
 
   if(!authIsReady) return <Loading />;
 
@@ -32,6 +36,8 @@ function App() {
                 </Routes>
               </div>
               <MembersBar />
+              {chatIsOpen && <Chat/>}
+              <ChatButton setChatIsOpen={setChatIsOpen} />
             </>
             ) : (
               <Routes>
