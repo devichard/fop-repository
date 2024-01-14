@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "../ui/button";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
 

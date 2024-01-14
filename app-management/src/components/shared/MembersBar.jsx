@@ -11,12 +11,19 @@ function MembersSkeleton() {
   );
 }
 
-export default function MembersBar() {
+export default function MembersBar( { setSelectedChat, setChatIsOpen } ) {
   const { documents: users } = useCollection("users");
-  const usersLength = Number(localStorage.getItem("userLength"));
 
-  const openChat = (userId) => {
+
+  const openChat = (userId, userName) => {
     // To Do: função irá abrir o chat com o usuário e o id userID
+    setChatIsOpen(true);
+    setSelectedChat(
+      {
+        id: userId,
+        recipient: userName,
+      }
+    );
   };
 
   useEffect(() => {
@@ -30,25 +37,25 @@ export default function MembersBar() {
   return (
     <aside className="h-screen w-[200px] border border-border p-5">
       <h2 className="font-medium text-lg mb-3">Membros</h2>
-      {users ? (
-        users.map((user) => (
-          <div
-            key={user.id}
-            className="flex items-center text-sm gap-2 py-2.5"
-            role="button"
-            onClick={() => openChat(user.id)}
-          >
+      {users
+        ? users.map((user) => (
             <div
-              className={`${
-                user.online ? "bg-green-400" : "bg-red-500"
-              } h-2 w-2 rounded-full`}
-            />
-            <p className="font-medium">{user.name}</p>
-          </div>
-        ))
-      ) : (
-        [...Array(usersLength)].map((_, index) =>  <MembersSkeleton key={index} />)
-      )}
+              key={user.id}
+              className="flex items-center text-sm gap-2 py-2.5"
+              role="button"
+              onClick={() => openChat(user.id, user.name)}
+            >
+              <div
+                className={`${
+                  user.online ? "bg-green-400" : "bg-red-500"
+                } h-2 w-2 rounded-full`}
+              />
+              <p className="font-medium">{user.name}</p>
+            </div>
+          ))
+        : [...Array(Number(localStorage.getItem("usersLength")))].map((_, index) => (
+            <MembersSkeleton key={index} />
+          ))}
     </aside>
   );
 }

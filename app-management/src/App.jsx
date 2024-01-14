@@ -17,8 +17,9 @@ import { useState } from "react";
 function App() {
   const { user, authIsReady } = useAuthContext();
   const [chatIsOpen, setChatIsOpen] = useState(false);
+  const [selectedChat, setSelectedChat] = useState(null);
 
-  if(!authIsReady) return <Loading />;
+  if (!authIsReady) return <Loading />;
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -35,18 +36,20 @@ function App() {
                   <Route path="*" element={<Home />} />
                 </Routes>
               </div>
-              <MembersBar />
-              {chatIsOpen && <Chat/>}
+              <MembersBar
+                setSelectedChat={setSelectedChat}
+                setChatIsOpen={setChatIsOpen}
+              />
+              {chatIsOpen && <Chat selectedChat={selectedChat} />}
               <ChatButton setChatIsOpen={setChatIsOpen} />
             </>
-            ) : (
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="*" element={<Signup />} />
-              </Routes>
-            )
-          }
+          ) : (
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="*" element={<Signup />} />
+            </Routes>
+          )}
         </BrowserRouter>
       </div>
     </ThemeProvider>
