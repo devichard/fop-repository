@@ -16,6 +16,7 @@ import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import LabelSvg from "./Label";
+import getInitials from "@/utils/getInitials";
 
 const userOptions = [
   {
@@ -90,7 +91,7 @@ export default function Sidebar() {
       <div className="flex p-5 gap-2.5">
         <Avatar>
           <AvatarImage src="" />
-          <AvatarFallback className="bg-primary/50">AR</AvatarFallback>
+          <AvatarFallback className="bg-primary/50">{getInitials(user.displayName)}</AvatarFallback>
         </Avatar>
         <div>
           <p className="font-medium">{user.displayName}</p>

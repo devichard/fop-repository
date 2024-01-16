@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useCollection } from "@/hooks/useCollection";
 import { Skeleton } from "../ui/skeleton";
+import { useAuthContext } from "@/hooks/useAuthContext";
 
 function MembersSkeleton() {
   return (
@@ -11,20 +12,30 @@ function MembersSkeleton() {
   );
 }
 
-export default function MembersBar( { setSelectedChat, setChatIsOpen } ) {
+export default function MembersBar({ setSelectedChat, setChatIsOpen, chats }) {
   const { documents: users } = useCollection("users");
-
+  const { user } = useAuthContext();
 
   const openChat = (userId, userName) => {
-    // To Do: função irá abrir o chat com o usuário e o id userID
-    setChatIsOpen(true);
-    setSelectedChat(
-      {
-        id: userId,
-        recipient: userName,
-      }
+    const chat = chats.find(
+      (chat) =>
+        chat.recipients.includes(userId) &&
+        chat.recipients.includes(user?.uid)
     );
+  
+    if (!chat) {
+      // Tratar o caso em que o chat não foi encontrado
+      console.error('Chat não encontrado.:', userId);
+      return;
+    }
+  
+    setChatIsOpen(true);
+    setSelectedChat({
+      id: chat.id,
+      recipient: userName,
+    });
   };
+  
 
   useEffect(() => {
     if (users) {
@@ -53,9 +64,9 @@ export default function MembersBar( { setSelectedChat, setChatIsOpen } ) {
               <p className="font-medium">{user.name}</p>
             </div>
           ))
-        : [...Array(Number(localStorage.getItem("usersLength")))].map((_, index) => (
-            <MembersSkeleton key={index} />
-          ))}
+        : [...Array(Number(localStorage.getItem("usersLength")))].map(
+            (_, index) => <MembersSkeleton key={index} />
+          )}
     </aside>
   );
 }

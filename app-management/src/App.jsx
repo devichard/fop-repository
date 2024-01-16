@@ -13,11 +13,16 @@ import Profile from "./pages/Profile/Profile";
 import Chat from "./components/shared/Chat";
 import ChatButton from "./components/shared/ChatButton";
 import { useState } from "react";
+import { useCollection } from "./hooks/useCollection";
 
 function App() {
   const { user, authIsReady } = useAuthContext();
   const [chatIsOpen, setChatIsOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
+
+  const { documents: chats } = useCollection("chats");
+
+  if (!chats) return <Loading />;
 
   if (!authIsReady) return <Loading />;
 
@@ -37,11 +42,15 @@ function App() {
                 </Routes>
               </div>
               <MembersBar
+                chats={chats}
                 setSelectedChat={setSelectedChat}
                 setChatIsOpen={setChatIsOpen}
               />
-              {chatIsOpen && <Chat selectedChat={selectedChat} />}
-              <ChatButton setChatIsOpen={setChatIsOpen} />
+              {chatIsOpen && <Chat chats={chats} selectedChat={selectedChat} />}
+              <ChatButton
+                setChatIsOpen={setChatIsOpen}
+                setSelectedChat={setSelectedChat}
+              />
             </>
           ) : (
             <Routes>
