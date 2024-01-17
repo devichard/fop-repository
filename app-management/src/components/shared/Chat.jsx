@@ -28,15 +28,15 @@ export default function Chat({ selectedChat, chats }) {
     ["createdAt", "asc"]
   );
 
-    const sendMessage = async () => {
-      await createMessage(chat?.id, "messages", {
-        author: user.uid,
-        createAt: new Date(),
-        content: messageContent,
-      });
+  const sendMessage = async () => {
+    await createMessage(chat?.id, "messages", {
+      author: user.uid,
+      createAt: new Date(),
+      content: messageContent,
+    });
 
-      setMessageContent();
-    }
+    setMessageContent("");
+  };
 
   return (
     <div className="fixed bottom-32 right-[248px] h-[400px] w-80 bg-input rounded-lg p-3 border border-foreground/10 drop-shadow-xl">
@@ -57,7 +57,9 @@ export default function Chat({ selectedChat, chats }) {
         <Separator className="bg-foreground/20 my-4" />
         <ScrollArea className="flex-grow">
           {selectedChat
-            ? messages?.map((message) => <Message key={message.id} message={message} />) || (
+            ? messages?.map((message) => (
+                <Message key={message.id} message={message} />
+              )) || (
                 <p className="text-foreground/50">
                   Não há mensagens para exibir.
                 </p>
@@ -69,7 +71,12 @@ export default function Chat({ selectedChat, chats }) {
               )}
         </ScrollArea>
         <div className="flex gap-2.5">
-          <Input type="text" placeholder="Digite aqui..." value={messageContent} onChange={(evento) => setMessageContent(evento.target.value)} />
+          <Input
+            type="text"
+            placeholder="Digite aqui..."
+            value={messageContent}
+            onChange={(evento) => setMessageContent(evento.target.value)}
+          />
           <Button onClick={sendMessage}>Enviar</Button>
         </div>
       </div>

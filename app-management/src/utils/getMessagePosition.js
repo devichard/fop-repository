@@ -1,8 +1,8 @@
 const getMessagePosition = (author, userUid) => {
     if (author === userUid) {
-      return "ml-auto bg-primary/90";
+      return "ml-auto mb-5 bg-primary/90";
     } else {
-      "mr-auto bg-foreground/90";
+      return "mr-auto mb-5 bg-foreground/90";
     }
   };
 

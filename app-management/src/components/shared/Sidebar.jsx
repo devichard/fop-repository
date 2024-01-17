@@ -115,7 +115,7 @@ export default function Sidebar() {
 
       <Separator className="my-4" />
 
-      <h2 className="font-bold text-xl px-5 mb-5">Projetos</h2>
+      <h2 className="font-bold text-xl px-5 mb-4">Projetos</h2>
 
       {projectOptions.map((option) => (
         <div
@@ -131,7 +131,7 @@ export default function Sidebar() {
 
       <Separator className="my-4" />
 
-      <h2></h2>
+      <h2 className="font-bold text-xl px-5 mb-4">Rótulos</h2>
 
       {labelOptions.map((option) => (
         <div

@@ -19,13 +19,15 @@ export default function MembersBar({ setSelectedChat, setChatIsOpen, chats }) {
   const openChat = (userId, userName) => {
     const chat = chats.find(
       (chat) =>
-        chat.recipients.includes(userId) &&
-        chat.recipients.includes(user?.uid)
+        chat.participants &&
+        user &&
+        chat.participants.includes(userId) &&
+        user.uid &&
+        chat.participants.includes(user.uid)
     );
   
     if (!chat) {
-      // Tratar o caso em que o chat não foi encontrado
-      console.error('Chat não encontrado.:', userId);
+      console.error('Chat não encontrado', userId);
       return;
     }
   
@@ -35,7 +37,6 @@ export default function MembersBar({ setSelectedChat, setChatIsOpen, chats }) {
       recipient: userName,
     });
   };
-  
 
   useEffect(() => {
     if (users) {
