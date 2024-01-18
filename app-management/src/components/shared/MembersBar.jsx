@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useCollection } from "@/hooks/useCollection";
 import { Skeleton } from "../ui/skeleton";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -12,59 +12,79 @@ function MembersSkeleton() {
   );
 }
 
-export default function MembersBar({ setSelectedChat, setChatIsOpen, chats }) {
-  const { documents: users } = useCollection("users");
+export default function MembersBar({
+  setSelectedChat,
+  setChatIsOpen,
+  chats,
+  users,
+}) {
   const { user } = useAuthContext();
 
   const openChat = (userId, userName) => {
-    const chat = chats.find(
+    // Verifica se já existe um chat com o usuário especificado
+    const existingChat = chats.find(
       (chat) =>
         chat.participants &&
-        user &&
         chat.participants.includes(userId) &&
-        user.uid &&
         chat.participants.includes(user.uid)
     );
-  
-    if (!chat) {
-      console.error('Chat não encontrado', userId);
-      return;
+
+    if (existingChat) {
+      setChatIsOpen(true);
+      setSelectedChat({
+        id: existingChat.id,
+        recipient: userName,
+        participants: existingChat.participants,
+      });
+    } else {
+      // Se não existir, cria um novo chat
+      const newChat = {
+        participants: [userId, user.uid],
+        createdAt: new Date(),
+        recipient: userName,
+      };
+
+      console.log("Novo chat criado:", newChat);
+
+      setChatIsOpen(true);
+      setSelectedChat({
+        id: chats.id, // Defina um ID apropriado para o novo chat
+        recipient: userName,
+        participants: newChat.participants,
+      });
     }
-  
-    setChatIsOpen(true);
-    setSelectedChat({
-      id: chat.id,
-      recipient: userName,
-    });
   };
 
   useEffect(() => {
     if (users) {
-      localStorage.setItem("usersLength", users.length);
+      localStorage.setItem("usersLength", users.length.toString());
     }
   }, [users]);
-
-  //if (!users) return <Loading />;
 
   return (
     <aside className="h-screen w-[200px] border border-border p-5">
       <h2 className="font-medium text-lg mb-3">Membros</h2>
       {users
-        ? users.map((user) => (
-            <div
-              key={user.id}
-              className="flex items-center text-sm gap-2 py-2.5"
-              role="button"
-              onClick={() => openChat(user.id, user.name)}
-            >
-              <div
-                className={`${
-                  user.online ? "bg-green-400" : "bg-red-500"
-                } h-2 w-2 rounded-full`}
-              />
-              <p className="font-medium">{user.name}</p>
-            </div>
-          ))
+        ? users
+            .filter((u) => !user?.uid || u.id !== user?.uid)
+            .map((user) => {
+              console.log("User:", user);
+              return (
+                <div
+                  key={user.id}
+                  className="flex items-center text-sm gap-2 py-2.5"
+                  role="button"
+                  onClick={() => openChat(user.id, user.name)}
+                >
+                  <div
+                    className={`${
+                      user.online ? "bg-green-400" : "bg-red-500"
+                    } h-2 w-2 rounded-full`}
+                  />
+                  <p className="font-medium">{user.name}</p>
+                </div>
+              );
+            })
         : [...Array(Number(localStorage.getItem("usersLength")))].map(
             (_, index) => <MembersSkeleton key={index} />
           )}

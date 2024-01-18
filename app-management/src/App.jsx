@@ -19,6 +19,7 @@ function App() {
   const { user, authIsReady } = useAuthContext();
   const [chatIsOpen, setChatIsOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
+  const { documents: users } = useCollection("users");
 
   const { documents: chats } = useCollection("chats");
 
@@ -42,11 +43,20 @@ function App() {
                 </Routes>
               </div>
               <MembersBar
+                users={users}
                 chats={chats}
                 setSelectedChat={setSelectedChat}
                 setChatIsOpen={setChatIsOpen}
               />
-              {chatIsOpen && <Chat chats={chats} selectedChat={selectedChat} />}
+              {chatIsOpen && (
+                <Chat
+                  users={users}
+                  setSelectedChat={setSelectedChat}
+                  setChatIsOpen={setChatIsOpen}
+                  chats={chats}
+                  selectedChat={selectedChat}
+                />
+              )}
               <ChatButton
                 setChatIsOpen={setChatIsOpen}
                 setSelectedChat={setSelectedChat}
