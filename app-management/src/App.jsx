@@ -19,8 +19,9 @@ function App() {
   const { user, authIsReady } = useAuthContext();
   const [chatIsOpen, setChatIsOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
-  const { documents: users } = useCollection("users");
+  const [rerender, setRerender] = useState(false);
 
+  const { documents: users } = useCollection("users");
   const { documents: chats } = useCollection("chats");
 
   if (!chats) return <Loading />;
@@ -33,11 +34,16 @@ function App() {
         <BrowserRouter>
           {user ? (
             <>
-              <Sidebar />
+              <Sidebar rerender={rerender} setRerender={setRerender} />
               <div className="flex-grow">
                 <Routes>
                   <Route exact path="/" element={<Home />} />
-                  <Route path="/profile" element={<Profile />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Profile rerender={rerender} setRerender={setRerender} />
+                    }
+                  />
                   <Route path="/projects" element={<Projects />} />
                   <Route path="*" element={<Home />} />
                 </Routes>
