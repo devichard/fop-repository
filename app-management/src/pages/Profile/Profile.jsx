@@ -8,11 +8,13 @@ import uploadToStorage from "@/utils/uploadToStorage";
 import { updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 export default function Profile({ rerender, setRerender }) {
   const { user } = useAuthContext();
   const inputRef = useRef();
-  
+  const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
 
   const openFileSelector = () => inputRef.current.click();
 
@@ -54,12 +56,11 @@ export default function Profile({ rerender, setRerender }) {
       })
       .catch((error) => {
         console.error("Erro ao atualizar o perfil: ", error);
-      })
-    
+      });
   };
 
   return (
-    <div className="p-5">
+    <div className="p-5 w-1/3">
       {rerender && <span className=""></span>}
       <h1 className="font-semibold mb-10 text-2xl">Meu perfil</h1>
       <div className="mb-10">
@@ -77,6 +78,11 @@ export default function Profile({ rerender, setRerender }) {
           className="hidden"
         />
       </div>
+      <p className="mt-5 text-muted-foreground mb-2.5">Nome completo</p>
+      <Input disabled value={user.displayName} readOnly type="text" />
+      <p className="mt-5 text-muted-foreground mb-2.5">E-mail</p>
+      <Input disabled value={user.email} readOnly type="email" />
+      <p className="mt-5 text-muted-foreground mb-2.5">Tema (Claro/Escuro)</p>
       <ModeToggle />
     </div>
   );
