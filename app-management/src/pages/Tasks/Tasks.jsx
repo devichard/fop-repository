@@ -12,6 +12,7 @@ import {
 } from "@radix-ui/react-icons";
 import { FilterIcon } from "lucide-react";
 import React from "react";
+import KanbanBoard from "./KanbanBoard";
 
 export default function Tasks() {
   return (
@@ -44,6 +45,7 @@ export default function Tasks() {
           <PopoverContent>Later</PopoverContent>
         </Popover>
       </div>
+      <KanbanBoard />
     </div>
   );
 }
