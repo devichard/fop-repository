@@ -9,7 +9,7 @@ export default function Task({ task, index }) {
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
-            className="fake-container p-5 border border-border mb-5 rounded-lg bg-background"
+            className={`fake-container p-5 border border-border mb-5 rounded-lg bg-background shadow-md`} // ${snapshot.isDragging && "bg-primary"} design<<<<
           >
             {task.content}
           </div>

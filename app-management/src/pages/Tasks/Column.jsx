@@ -1,23 +1,41 @@
 import React from "react";
 import Task from "./Task";
 import { Droppable } from "react-beautiful-dnd";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@radix-ui/react-icons";
+import NewTaskDialog from "./NewTaskDialog";
 
-export default function Column({ column, tasks }) {
+export default function Column({ column, tasks, state, setState }) {
+
+  const addTask = async () => {
+
+  };
+
   return (
-    <div className="fake-container bg-secondary p-5 border border-border rounded-xl">
-      <h3>{column.title}</h3>
+    <div className="fake-container w-1/4 bg-secondary p-5 border border-border rounded-xl flex flex-col">
+      <h3 className="font-semibold text-xl">{column.title}</h3>
       <Droppable droppableId={column.id}>
         {(provided) => {
           return (
             <div
-              className="task-list"
+              className="mt-5 flex-grow min-h-[250px] flex flex-col justify-between"
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {tasks.map((task, index) => (
+              {tasks.length ? tasks.map((task, index) => (
                 <Task key={task.id} task={task} index={index} />
-              ))}
+              )) : <div></div>}
               {provided.placeholder}
+
+              <NewTaskDialog>
+                <Button
+                className="shadow-md"
+                variant="outline"
+                onClick={() => addTask(column)}>
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Adicionar tarefa
+                </Button>
+              </NewTaskDialog>
             </div>
           );
         }}
