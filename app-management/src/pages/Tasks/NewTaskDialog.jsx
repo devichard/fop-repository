@@ -5,23 +5,62 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogFooter
-} from "@/components/ui/dialog"
+    DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePickerWithPresets } from "@/components/shared/DatePickerWithPresets";
+import Select from "react-select";
+import { useCollection } from "@/hooks/useCollection";
+import { useDocument } from "@/hooks/useDocument";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { useFirestore } from "@/hooks/useFirestore";
+import { arrayUnion } from "firebase/firestore";
+import { useToast } from "@/components/ui/use-toast";
+import { useUserContext } from "@/hooks/useUserContext";
+import { useUsersContext } from "@/hooks/useUsersContext";
 
 export default function NewTaskDialog({ children }) {
+    const { toast } = useToast();
+    const { userDoc } = useUserContext();
+    const { users } = useUsersContext();
+    const { document: teamDoc } = useDocument("teams", userDoc.teamId);
+    const { updateDocument: updateTeam } = useFirestore("teams");
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("")
+    const [description, setDescription] = useState("");
+    const [selectedTags, setSelectedTags] = useState([]);
+    const [dueDate, setDueDate] = useState(null);
+    const [assignedMembers, setAssignedMembers] = useState([]);
+    const [newTag, setNewTag] = useState([]);
+    const [showNewTagForm, setShowNewTagForm] = useState(false);
+
+    const userOptions = users?.map((user) => ({
+        value: user.id,
+        label: user.name,
+    }));
+
+    const tagOptions = teamDoc?.tags.map((tag) => ({ value: tag, label: tag }));
+
+    const addNewTag = async (evento) => {
+        evento.preventDefault();
+        if (!newTag) return;
+        await updateTeam("tCOZQtSnxlC2jomGKHQf", {
+            tags: arrayUnion(newTag),
+        });
+        toast({
+            title: "Tag criada com sucesso!",
+            description: `A tag "${newTag}" foi adicionada com êxito.`,
+        });
+        setNewTag("");
+        setShowNewTagForm(false);
+    };
+
     return (
         <Dialog>
-            <DialogTrigger asChild>
-                {children}
-            </DialogTrigger>
+            <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Nova tarefa</DialogTitle>
@@ -31,12 +70,11 @@ export default function NewTaskDialog({ children }) {
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">
-                            Título
-                        </Label>
+                        <Label htmlFor="name">Título</Label>
                         <Input
                             id="name"
-                            value={title} onChange={(evento) => setTitle(evento.target.value)}
+                            value={title}
+                            onChange={(evento) => setTitle(evento.target.value)}
                             className="col-span-3"
                         />
                     </div>
@@ -50,15 +88,49 @@ export default function NewTaskDialog({ children }) {
                         />
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">Data para conclusão</Label>
-                        <DatePickerWithPresets/>
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="name">Tags</Label>
+                            <PlusCircledIcon
+                                className="h-3 w-3 shrink-0"
+                                role="button"
+                                onClick={() => setShowNewTagForm(true)}
+                            />
+                            {showNewTagForm && (
+                                <form onSubmit={addNewTag}>
+                                    <Input
+                                        palceholder="Nova tag..."
+                                        className="h-6"
+                                        value={newTag}
+                                        onChange={(evento) => setNewTag(evento.target.value)}
+                                    />
+                                </form>
+                            )}
+                        </div>
+                        <Select
+                            isMulti
+                            isSearchable
+                            options={tagOptions}
+                            onChange={(options) => setSelectedTags(options)}
+                        />
                     </div>
-
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="name">Data para conclusão</Label>
+                        <DatePickerWithPresets date={dueDate} setDate={setDueDate} />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="name">Atribuir a:</Label>
+                        <Select
+                            isMulti
+                            isSearchable
+                            options={userOptions}
+                            onChange={(options) => setAssignedMembers(options)}
+                        />
+                    </div>
                 </div>
                 <DialogFooter>
                     <Button type="submit">Criar tarefa</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

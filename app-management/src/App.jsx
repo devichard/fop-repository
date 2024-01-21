@@ -15,6 +15,16 @@ import ChatButton from "./components/shared/ChatButton";
 import { useState } from "react";
 import { useCollection } from "./hooks/useCollection";
 import Tasks from "./pages/Tasks/Tasks";
+import { Toaster } from "./components/ui/toaster";
+import { UserDocProvider } from "./contexts/UserDocContext";
+import { UsersProvider } from "./contexts/UsersContext";
+import { useDocument } from "./hooks/useDocument";
+
+export const UserDocWrapper = ({ user, children }) => {
+  const { document: userDoc } = useDocument("users", user?.uid);
+  if (!userDoc) return <Loading />;
+  return children(userDoc);
+}
 
 function App() {
   const { user, authIsReady } = useAuthContext();
@@ -32,43 +42,53 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="App flex">
+        <Toaster />
         <BrowserRouter>
           {user ? (
-            <>
-              <Sidebar rerender={rerender} setRerender={setRerender} />
-              <div className="flex-grow">
-                <Routes>
-                  <Route exact path="/" element={<Home />} />
-                  <Route
-                    path="/profile"
-                    element={
-                      <Profile rerender={rerender} setRerender={setRerender} />
-                    }
-                  />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="*" element={<Home />} />
-                </Routes>
-              </div>
-              <MembersBar
-                users={users}
-                chats={chats}
-                setSelectedChat={setSelectedChat}
-                setChatIsOpen={setChatIsOpen}
-              />
-              {chatIsOpen && (
-                <Chat
-                  users={users}
-                  setSelectedChat={setSelectedChat}
-                  setChatIsOpen={setChatIsOpen}
-                  chats={chats}
-                  selectedChat={selectedChat}
-                />
-              )}
-              <ChatButton
-                setChatIsOpen={setChatIsOpen}
-                setSelectedChat={setSelectedChat}
-              />
-            </>
+            <UserDocProvider user={user}>
+              <UserDocWrapper user={user}>
+                {(userDoc) => (
+                  <UsersProvider userDoc={userDoc}>
+
+                    <>
+                      <Sidebar rerender={rerender} setRerender={setRerender} />
+                      <div className="flex-grow">
+                        <Routes>
+                          <Route exact path="/" element={<Home />} />
+                          <Route
+                            path="/profile"
+                            element={
+                              <Profile rerender={rerender} setRerender={setRerender} />
+                            }
+                          />
+                          <Route path="/tasks" element={<Tasks />} />
+                          <Route path="*" element={<Home />} />
+                        </Routes>
+                      </div>
+                      <MembersBar
+                        users={users}
+                        chats={chats}
+                        setSelectedChat={setSelectedChat}
+                        setChatIsOpen={setChatIsOpen}
+                      />
+                      {chatIsOpen && (
+                        <Chat
+                          users={users}
+                          setSelectedChat={setSelectedChat}
+                          setChatIsOpen={setChatIsOpen}
+                          chats={chats}
+                          selectedChat={selectedChat}
+                        />
+                      )}
+                      <ChatButton
+                        setChatIsOpen={setChatIsOpen}
+                        setSelectedChat={setSelectedChat}
+                      />
+                    </>
+                  </UsersProvider>
+                )}
+              </UserDocWrapper>
+            </UserDocProvider>
           ) : (
             <Routes>
               <Route path="/login" element={<Login />} />
