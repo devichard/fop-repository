@@ -14,7 +14,6 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { DatePickerWithPresets } from "@/components/shared/DatePickerWithPresets";
 import Select from "react-select";
-import { useCollection } from "@/hooks/useCollection";
 import { useDocument } from "@/hooks/useDocument";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useFirestore } from "@/hooks/useFirestore";
@@ -23,7 +22,15 @@ import { useToast } from "@/components/ui/use-toast";
 import { useUserContext } from "@/hooks/useUserContext";
 import { useUsersContext } from "@/hooks/useUsersContext";
 
-export default function NewTaskDialog({ children }) {
+const priorityOptions = [
+    { value: "low", label: "Baixa Prioridade" },
+    { value: "medium", label: "Média Prioridade" },
+    { value: "high", label: "Alta Prioridade" },
+    { value: "standby", label: "Em Standby" },
+]
+
+export default function NewTaskDialog({ children, open, setOpen }) {
+    const { addSubDocument: addTask } = useFirestore("teams")
     const { toast } = useToast();
     const { userDoc } = useUserContext();
     const { users } = useUsersContext();
@@ -33,9 +40,11 @@ export default function NewTaskDialog({ children }) {
     const [description, setDescription] = useState("");
     const [selectedTags, setSelectedTags] = useState([]);
     const [dueDate, setDueDate] = useState(null);
+    const [priority, setPriority] = useState("");
     const [assignedMembers, setAssignedMembers] = useState([]);
     const [newTag, setNewTag] = useState([]);
     const [showNewTagForm, setShowNewTagForm] = useState(false);
+
 
     const userOptions = users?.map((user) => ({
         value: user.id,
@@ -58,8 +67,33 @@ export default function NewTaskDialog({ children }) {
         setShowNewTagForm(false);
     };
 
+    const createTask = async (evento) => {
+        evento.preventDefault();
+        await addTask(userDoc.teamId, "tasks", {
+            title,
+            description,
+            tags: selectedTags.map((tag) => tag.value),
+            dueDate,
+            assignedMembers: assignedMembers.map((member) => member.value),
+            status: "backlog",
+            deleted: false,
+            priority,
+        });
+        toast({
+            title: "Nova tarefa",
+            description: `A tarefa "${title}" foi adicionada com sucesso.`
+        });
+        setTitle("");
+        setDescription("");
+        setSelectedTags([]);
+        setDueDate(null);
+        setAssignedMembers([]);
+        setOpen(false);
+    };
+
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -118,6 +152,13 @@ export default function NewTaskDialog({ children }) {
                         <DatePickerWithPresets date={dueDate} setDate={setDueDate} />
                     </div>
                     <div className="flex flex-col gap-2">
+                        <Label htmlFor="name">Prioridade</Label>
+                        <Select
+                            options={priorityOptions}
+                            onChange={option => setPriority(option.value)}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
                         <Label htmlFor="name">Atribuir a:</Label>
                         <Select
                             isMulti
@@ -128,7 +169,7 @@ export default function NewTaskDialog({ children }) {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit">Criar tarefa</Button>
+                    <Button type="submit" onClick={createTask}>Criar tarefa</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

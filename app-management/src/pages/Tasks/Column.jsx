@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Task from "./Task";
 import { Droppable } from "react-beautiful-dnd";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import NewTaskDialog from "./NewTaskDialog";
 
 export default function Column({ column, tasks, state, setState }) {
+  const [showNewTaskDialog, setShowNewTaskDialog] = useState(false)
 
   const addTask = async () => {
 
@@ -27,11 +28,11 @@ export default function Column({ column, tasks, state, setState }) {
               )) : <div></div>}
               {provided.placeholder}
 
-              <NewTaskDialog>
+              <NewTaskDialog open={showNewTaskDialog} setOpen={setShowNewTaskDialog}>
                 <Button
-                className="shadow-md"
-                variant="outline"
-                onClick={() => addTask(column)}>
+                  className="shadow-md"
+                  variant="outline"
+                  onClick={() => setShowNewTaskDialog(true)}>
                   <PlusIcon className="h-4 w-4 mr-2" />
                   Adicionar tarefa
                 </Button>

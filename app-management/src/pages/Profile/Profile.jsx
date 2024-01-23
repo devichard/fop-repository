@@ -9,9 +9,11 @@ import { updateProfile } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { useFirestore } from "@/hooks/useFirestore";
 
 export default function Profile({ rerender, setRerender }) {
   const { user } = useAuthContext();
+  const { updateDocument: updateUser } = useFirestore("users");
   const inputRef = useRef();
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -39,15 +41,18 @@ export default function Profile({ rerender, setRerender }) {
 
     const downloadUrl = await uploadToStorage(
       selectedFile,
-      `users/${user.uid}/`,
+      `users/${user.uid}`,
       "profilePic"
     );
 
     updateProfile(auth.currentUser, {
       photoURL: downloadUrl,
     })
-      .then(() => {
-        //Recarregue o usuário para atualizar as informações
+      .then(async () => {
+        await updateUser(user.uid, {
+          photoURL: downloadUrl,
+        });
+
         return auth.currentUser.reload();
       })
       .then(() => {

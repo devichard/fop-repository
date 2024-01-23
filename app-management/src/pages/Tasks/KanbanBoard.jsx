@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Column from "./Column";
 import { DragDropContext } from "react-beautiful-dnd";
+import { useSubcollection } from "@/hooks/useSubcollection";
+import { useUserContext } from "@/hooks/useUserContext";
+import { useEffect } from "react";
 
 const initialData = {
   tasks: {},
@@ -18,7 +21,77 @@ const initialData = {
 };
 
 export default function KanbanBoard() {
+  const { userDoc } = useUserContext();
+  const { documents: tasks } = useSubcollection(
+    "teams",
+    userDoc.teamId,
+    "tasks"
+  );
+
   const [state, setState] = useState(initialData);
+
+  useEffect(() => {
+    if (tasks) {
+      //Transforma o array em um objeto de tarefas
+      const tasksObject = tasks?.reduce((acc, task) => {
+        acc[task.id] = task;
+        return acc;
+      }, {});
+
+      const columnsTaskIds = {
+        Backlog: [],
+        "A fazer": [],
+        "Em progresso": [],
+        "Em revisão": [],
+      };
+
+      tasks?.forEach((task) => {
+        switch (task.status) {
+          case "backlog":
+            columnsTaskIds["Backlog"].push(task.id);
+            break;
+          case "todo":
+            columnsTaskIds["A fazer"].push(task.id);
+            break;
+          case "in_progress":
+            columnsTaskIds["Em progresso"].push(task.id);
+            break;
+          case "in_review":
+            columnsTaskIds["Em revisão"].push(task.id);
+            break;
+          default:
+            break;
+        }
+      });
+
+      const newState = {
+        tasks: tasksObject,
+        columns: {
+          "column-1": {
+            ...initialData.columns["column-1"],
+            taskIds: columnsTaskIds["Backlog"],
+          },
+          "column-2": {
+            ...initialData.columns["column-2"],
+            taskIds: columnsTaskIds["A fazer"],
+          },
+          "column-3": {
+            ...initialData.columns["column-3"],
+            taskIds: columnsTaskIds["Em progresso"],
+          },
+          "column-4": {
+            ...initialData.columns["column-4"],
+            taskIds: columnsTaskIds["Em revisão"],
+          },
+        },
+        columnOrder: initialData.columnOrder,
+      };
+      setState(newState);
+    }
+  }, [tasks])
+
+
+
 
   const onDragEnd = (result) => {
     // TODO: handle reordering
@@ -100,7 +173,7 @@ export default function KanbanBoard() {
               column={column}
               tasks={tasks}
             />
-          )
+          );
         })}
       </div>
     </DragDropContext>
