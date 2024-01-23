@@ -27,10 +27,10 @@ const priorityOptions = [
     { value: "medium", label: "Média Prioridade" },
     { value: "high", label: "Alta Prioridade" },
     { value: "standby", label: "Em Standby" },
-]
+];
 
 export default function NewTaskDialog({ children, open, setOpen }) {
-    const { addSubDocument: addTask } = useFirestore("teams")
+    const { addSubDocument: addTask } = useFirestore("teams");
     const { toast } = useToast();
     const { userDoc } = useUserContext();
     const { users } = useUsersContext();
@@ -44,7 +44,7 @@ export default function NewTaskDialog({ children, open, setOpen }) {
     const [assignedMembers, setAssignedMembers] = useState([]);
     const [newTag, setNewTag] = useState([]);
     const [showNewTagForm, setShowNewTagForm] = useState(false);
-
+    const selectedColumn = localStorage.getItem("selectedColumn") || "backlog";
 
     const userOptions = users?.map((user) => ({
         value: user.id,
@@ -67,21 +67,53 @@ export default function NewTaskDialog({ children, open, setOpen }) {
         setShowNewTagForm(false);
     };
 
+    const getColumn = (status) => {
+        switch (status) {
+            case "backlog":
+                return "column-1";
+            case "todo":
+                return "column-2";
+            case "in_progress":
+                return "column-3";
+            case "in_review":
+                return "column-4";
+            default:
+                return "column-1";
+        }
+    }
+
     const createTask = async (evento) => {
         evento.preventDefault();
-        await addTask(userDoc.teamId, "tasks", {
+        if (
+            !title ||
+            !description ||
+            !dueDate ||
+            !priority ||
+            assignedMembers.length < 1 ||
+            selectedTags.length < 1
+        )
+            return;
+
+        const { payload: taskId } = await addTask(userDoc.teamId, "tasks", {
             title,
             description,
             tags: selectedTags.map((tag) => tag.value),
             dueDate,
             assignedMembers: assignedMembers.map((member) => member.value),
-            status: "backlog",
+            status: selectedColumn,
             deleted: false,
             priority,
         });
+
+        const column = getColumn(selectedColumn);
+
+        await updateTeam(userDoc.teamId, {
+            [column]: arrayUnion(taskId),
+        });
+
         toast({
             title: "Nova tarefa",
-            description: `A tarefa "${title}" foi adicionada com sucesso.`
+            description: `A tarefa "${title}" foi adicionada com sucesso.`,
         });
         setTitle("");
         setDescription("");
@@ -90,7 +122,6 @@ export default function NewTaskDialog({ children, open, setOpen }) {
         setAssignedMembers([]);
         setOpen(false);
     };
-
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -155,7 +186,7 @@ export default function NewTaskDialog({ children, open, setOpen }) {
                         <Label htmlFor="name">Prioridade</Label>
                         <Select
                             options={priorityOptions}
-                            onChange={option => setPriority(option.value)}
+                            onChange={(option) => setPriority(option.value)}
                         />
                     </div>
                     <div className="flex flex-col gap-2">
@@ -169,7 +200,9 @@ export default function NewTaskDialog({ children, open, setOpen }) {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button type="submit" onClick={createTask}>Criar tarefa</Button>
+                    <Button type="submit" onClick={createTask}>
+                        Criar tarefa
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

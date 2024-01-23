@@ -171,6 +171,26 @@ export const useFirestore = (coll) => {
     }
   };
 
+  const updateSubDocument = async (docId, subcoll, subDocId, updates) => {
+    dispatch({ type: "IS_PENDING" });
+    try {
+      const subDocRef = doc(db, `${coll}/${docId}/${subcoll}`, subDocId);
+      const updatedSubDocument = await updateDoc(subDocRef, {
+        ...updates,
+        lastEdited: timestamp,
+      });
+      dispatchIfNotCancelled({
+        type: "UPDATED_DOCUMENT",
+        payload: updatedSubDocument,
+      });
+      return { type: "SUCCESS", payload: updatedSubDocument };
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      console.log(err);
+      return { type: "ERROR", payload: err.message };
+    }
+  };
+
   useEffect(() => () => setIsCancelled(true), []);
 
   return {
@@ -179,6 +199,7 @@ export const useFirestore = (coll) => {
     createDocument,
     updateDocument,
     addSubDocument,
+    updateSubDocument,
     response,
     serverTimestamp,
   };

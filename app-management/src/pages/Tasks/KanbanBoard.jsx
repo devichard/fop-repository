@@ -4,6 +4,9 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { useSubcollection } from "@/hooks/useSubcollection";
 import { useUserContext } from "@/hooks/useUserContext";
 import { useEffect } from "react";
+import { useFirestore } from "@/hooks/useFirestore";
+import { useDocument } from "@/hooks/useDocument";
+
 
 const initialData = {
   tasks: {},
@@ -20,8 +23,15 @@ const initialData = {
   columnOrder: ["column-1", "column-2", "column-3", "column-4"],
 };
 
-export default function KanbanBoard() {
+export default function KanbanBoard({
+  showNewTaskDialog,
+  setShowNewTaskDialog,
+}) {
+  const { updateDocument: updateTeam, updateSubDocument: updateTask } = useFirestore("teams");
   const { userDoc } = useUserContext();
+
+  const { document: teamDoc } = useDocument("teams", userDoc.teamId);
+  
   const { documents: tasks } = useSubcollection(
     "teams",
     userDoc.teamId,
@@ -30,8 +40,23 @@ export default function KanbanBoard() {
 
   const [state, setState] = useState(initialData);
 
+  const getNewStatus = title => {
+    switch (title) {
+      case "Backlog":
+        return "backlog";
+      case "A fazer":
+        return "todo";
+      case "Em progresso":
+        return "in_progress";
+      case "Em revisão":
+        return "in_review";
+      default:
+        return "backlog";
+    }
+  }
+
   useEffect(() => {
-    if (tasks) {
+    if (tasks && teamDoc) {
       //Transforma o array em um objeto de tarefas
       const tasksObject = tasks?.reduce((acc, task) => {
         acc[task.id] = task;
@@ -39,30 +64,11 @@ export default function KanbanBoard() {
       }, {});
 
       const columnsTaskIds = {
-        Backlog: [],
-        "A fazer": [],
-        "Em progresso": [],
-        "Em revisão": [],
+        Backlog: [...teamDoc["column-1"]],
+        "A fazer": [...teamDoc["column-2"]],
+        "Em progresso": [...teamDoc["column-3"]],
+        "Em revisão": [...teamDoc["column-4"]],
       };
-
-      tasks?.forEach((task) => {
-        switch (task.status) {
-          case "backlog":
-            columnsTaskIds["Backlog"].push(task.id);
-            break;
-          case "todo":
-            columnsTaskIds["A fazer"].push(task.id);
-            break;
-          case "in_progress":
-            columnsTaskIds["Em progresso"].push(task.id);
-            break;
-          case "in_review":
-            columnsTaskIds["Em revisão"].push(task.id);
-            break;
-          default:
-            break;
-        }
-      });
 
       const newState = {
         tasks: tasksObject,
@@ -88,12 +94,10 @@ export default function KanbanBoard() {
       };
       setState(newState);
     }
-  }, [tasks])
+  }, [tasks, teamDoc]);
 
 
-
-
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     // TODO: handle reordering
     const { destination, source, draggableId } = result;
 
@@ -114,6 +118,10 @@ export default function KanbanBoard() {
       newTaskIds.splice(source.index, 1);
       newTaskIds.splice(destination.index, 0, draggableId);
 
+      await updateTeam(userDoc.teamId, {
+        [source.droppableId]: newTaskIds,
+      });
+
       const newColumn = {
         ...column,
         taskIds: newTaskIds,
@@ -132,6 +140,18 @@ export default function KanbanBoard() {
       const newStartTaskIds = Array.from(start.taskIds);
       newStartTaskIds.splice(source.index, 1);
 
+      const movedTask = state.tasks[draggableId];
+
+      const updatedTask = {
+        ...movedTask,
+        status: getNewStatus(finish.title),
+      };
+
+      const newTasks = {
+        ...state.tasks,
+        [updatedTask.id]: updatedTask,
+      };
+
       const newStart = {
         ...start,
         taskIds: newStartTaskIds,
@@ -145,14 +165,24 @@ export default function KanbanBoard() {
         taskIds: newFinishTaskIds,
       };
 
+      await updateTeam(userDoc.teamId, {
+        [source.droppableId]: newStartTaskIds,
+        [destination.droppableId]: newFinishTaskIds,
+      });
+
       const newState = {
         ...state,
+        tasks: newTasks,
         columns: {
           ...state.columns,
           [newStart.id]: newStart,
           [newFinish.id]: newFinish,
         },
       };
+
+      await updateTask(userDoc.teamId, "tasks", updatedTask.id, {
+        status: getNewStatus(finish.title),
+      });
 
       setState(newState);
     }
@@ -167,8 +197,8 @@ export default function KanbanBoard() {
 
           return (
             <Column
-              state={state}
-              setState={setState}
+              showNewTaskDialog={showNewTaskDialog}
+              setShowNewTaskDialog={setShowNewTaskDialog}
               key={columnId}
               column={column}
               tasks={tasks}

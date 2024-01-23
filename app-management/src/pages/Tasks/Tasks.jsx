@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -15,6 +16,8 @@ import React from "react";
 import KanbanBoard from "./KanbanBoard";
 
 export default function Tasks() {
+  const [showNewTaskDialog, setShowNewTaskDialog] = useState(false);
+
   return (
     <div className="p-5">
       <div className="flex items-center justify-between mb-10">
@@ -24,7 +27,7 @@ export default function Tasks() {
             <MagnifyingGlassIcon className="h-6 w-6 absolute top-1/2 left-2 transform -translate-y-1/2 text-gray-400" />
             <Input placeholder="Pesquisar" className="pl-10" />
           </div>
-          <Button size="default">
+          <Button size="default" onClick={( ) => setShowNewTaskDialog(true)}>
             <PlusIcon />
             Nova tarefa
           </Button>
@@ -45,7 +48,7 @@ export default function Tasks() {
           <PopoverContent>Later</PopoverContent>
         </Popover>
       </div>
-      <KanbanBoard />
+      <KanbanBoard showNewTaskDialog={showNewTaskDialog} setShowNewTaskDialog={setShowNewTaskDialog} />
     </div>
   );
 }
