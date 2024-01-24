@@ -20,8 +20,8 @@ export default function Profile({ rerender, setRerender }) {
 
   const openFileSelector = () => inputRef.current.click();
 
-  const onFileSelector = async (evento) => {
-    const selectedFile = evento.target.files[0];
+  const onFileSelector = async (e) => {
+    const selectedFile = e.target.files[0];
     if (!selectedFile) {
       alert("Por favor, selecione uma imagem.");
       return;

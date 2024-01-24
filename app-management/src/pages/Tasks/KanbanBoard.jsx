@@ -26,12 +26,16 @@ const initialData = {
 export default function KanbanBoard({
   showNewTaskDialog,
   setShowNewTaskDialog,
+  search,
+  selectedTag,
+  selectedMember,
+  selectedPriority,
 }) {
   const { updateDocument: updateTeam, updateSubDocument: updateTask } = useFirestore("teams");
   const { userDoc } = useUserContext();
 
   const { document: teamDoc } = useDocument("teams", userDoc.teamId);
-  
+
   const { documents: tasks } = useSubcollection(
     "teams",
     userDoc.teamId,
@@ -190,18 +194,45 @@ export default function KanbanBoard({
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-5 mt-10">
+      <div className="flex flex-col sm:flex-row gap-5 mt-10">
         {state.columnOrder.map((columnId) => {
           const column = state.columns[columnId];
           const tasks = column.taskIds.map((taskId) => state.tasks[taskId]);
 
+          const filteredTasks = tasks.filter((task) => {
+            let shouldReturnTrue = true;
+          
+            if (selectedTag) {
+              shouldReturnTrue = task && task.tags?.includes(selectedTag);
+            }
+          
+            if (selectedMember) {
+              shouldReturnTrue = task && task.assignedMembers?.includes(selectedMember);
+            }
+          
+            if (selectedPriority) {
+              shouldReturnTrue = task && task.priority === selectedPriority;
+            }
+          
+            return (
+              shouldReturnTrue &&
+              task &&
+              task.title &&
+              task.assignedMembers &&
+              (
+                task.title.toLowerCase().includes(search.toLowerCase()) ||
+                task.description.toLowerCase().includes(search.toLowerCase())
+              )
+            );
+          });
+          
           return (
             <Column
               showNewTaskDialog={showNewTaskDialog}
               setShowNewTaskDialog={setShowNewTaskDialog}
               key={columnId}
               column={column}
-              tasks={tasks}
+              tasks={filteredTasks}
             />
           );
         })}

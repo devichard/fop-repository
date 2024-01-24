@@ -13,8 +13,8 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const { signup, error, isPending } = useSignup();
 
-  const handleSubmit = (evento) => {
-    evento.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     signup(email, password, fullName);
   };
 
@@ -47,21 +47,21 @@ export default function Signup() {
               type="text"
               autoComplete="name"
               value={fullName}
-              onChange={(evento) => setFullName(evento.target.value)}
+              onChange={(e) => setFullName(e.target.value)}
             />
             <p className="mt-5 text-muted-foreground mb-2.5">E-mail</p>
             <Input
               type="email"
               autoComplete="email"
               value={email}
-              onChange={(evento) => setEmail(evento.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <p className="mt-5 text-muted-foreground mb-2.5">Senha</p>
             <Input
               type="password"
               autoComplete="new-password"
               value={password}
-              onChange={(evento) => setPassword(evento.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               disabled={isPending}

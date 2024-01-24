@@ -6,9 +6,17 @@ import getInitials from "@/utils/getInitials";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Draggable } from "react-beautiful-dnd";
 import calculateDaysUntilDue from "@/utils/daysUntilDue";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useUserContext } from "@/hooks/useUserContext";
+import { useDocument } from "@/hooks/useDocument";
+import { useFirestore } from "@/hooks/useFirestore";
+import { arrayRemove } from "firebase/firestore";
 
-export default function Task({ task, index }) {
+export default function Task({ task, index, columnId }) {
   const { users } = useUsersContext();
+  const { userDoc } = useUserContext();
+  const { deleteSubDocument: deleteTask } = useFirestore("teams");
+  const { updateDocument: updateTeam } = useFirestore("teams");
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -25,9 +33,20 @@ export default function Task({ task, index }) {
     }
   };
 
+  const removeTask = async (taskId) => {
+    await deleteTask(userDoc.teamId, "tasks", taskId);
+    await updateTeam(userDoc.teamId, {
+      [columnId]: arrayRemove(taskId),
+    });
+  };
+
+  if (!task) return null;
+
   const assignedMembers = users.filter((u) =>
     task.assignedMembers.includes(u.id)
   );
+
+
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => {
@@ -40,7 +59,18 @@ export default function Task({ task, index }) {
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">{task.title}</h3>
-              <DotsHorizontalIcon className="w-5 h-5" role="button" />
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <DotsHorizontalIcon className="w-5 h-5" role="button" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Editar</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => removeTask(task.id)}>Excluir</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
             </div>
             <div className="flex flex-wrap gap-1.5 mt-2.5">
               {task.tags.map((tag) => (

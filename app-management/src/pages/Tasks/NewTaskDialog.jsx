@@ -23,9 +23,9 @@ import { useUserContext } from "@/hooks/useUserContext";
 import { useUsersContext } from "@/hooks/useUsersContext";
 
 const priorityOptions = [
-    { value: "low", label: "Baixa Prioridade" },
-    { value: "medium", label: "Média Prioridade" },
-    { value: "high", label: "Alta Prioridade" },
+    { value: "low", label: "Baixa" },
+    { value: "medium", label: "Média" },
+    { value: "high", label: "Alta" },
     { value: "standby", label: "Em Standby" },
 ];
 
@@ -53,8 +53,8 @@ export default function NewTaskDialog({ children, open, setOpen }) {
 
     const tagOptions = teamDoc?.tags.map((tag) => ({ value: tag, label: tag }));
 
-    const addNewTag = async (evento) => {
-        evento.preventDefault();
+    const addNewTag = async (e) => {
+        e.preventDefault();
         if (!newTag) return;
         await updateTeam("tCOZQtSnxlC2jomGKHQf", {
             tags: arrayUnion(newTag),
@@ -82,8 +82,8 @@ export default function NewTaskDialog({ children, open, setOpen }) {
         }
     }
 
-    const createTask = async (evento) => {
-        evento.preventDefault();
+    const createTask = async (e) => {
+        e.preventDefault();
         if (
             !title ||
             !description ||
@@ -139,7 +139,7 @@ export default function NewTaskDialog({ children, open, setOpen }) {
                         <Input
                             id="name"
                             value={title}
-                            onChange={(evento) => setTitle(evento.target.value)}
+                            onChange={(e) => setTitle(e.target.value)}
                             className="col-span-3"
                         />
                     </div>
@@ -148,7 +148,7 @@ export default function NewTaskDialog({ children, open, setOpen }) {
                         <Textarea
                             id="name"
                             value={description}
-                            onChange={(evento) => setDescription(evento.target.value)}
+                            onChange={(e) => setDescription(e.target.value)}
                             className="h-32 resize-none"
                         />
                     </div>
@@ -166,7 +166,7 @@ export default function NewTaskDialog({ children, open, setOpen }) {
                                         palceholder="Nova tag..."
                                         className="h-6"
                                         value={newTag}
-                                        onChange={(evento) => setNewTag(evento.target.value)}
+                                        onChange={(e) => setNewTag(e.target.value)}
                                     />
                                 </form>
                             )}

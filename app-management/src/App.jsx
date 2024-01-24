@@ -19,21 +19,26 @@ import { Toaster } from "./components/ui/toaster";
 import { UserDocProvider } from "./contexts/UserDocContext";
 import { UsersProvider } from "./contexts/UsersContext";
 import { useDocument } from "./hooks/useDocument";
+import useMediaQuery from "./hooks/useMediaQuery";
+import Topbar from "./components/shared/Topbar";
 
 export const UserDocWrapper = ({ user, children }) => {
   const { document: userDoc } = useDocument("users", user?.uid);
   if (!userDoc) return <Loading />;
   return children(userDoc);
-}
+};
 
 function App() {
   const { user, authIsReady } = useAuthContext();
   const [chatIsOpen, setChatIsOpen] = useState(false);
   const [selectedChat, setSelectedChat] = useState(null);
   const [rerender, setRerender] = useState(false);
+  const [selectedPriority, setSelectedPriority] = useState(null);
 
   const { documents: users } = useCollection("users");
   const { documents: chats } = useCollection("chats");
+
+  const isMobile = useMediaQuery("(max-width: 640px");
 
   if (!chats) return <Loading />;
 
@@ -41,7 +46,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="App flex">
+      <div className="App flex flex-col sm:flex-row">
         <Toaster />
         <BrowserRouter>
           {user ? (
@@ -49,28 +54,45 @@ function App() {
               <UserDocWrapper user={user}>
                 {(userDoc) => (
                   <UsersProvider userDoc={userDoc}>
-
                     <>
-                      <Sidebar rerender={rerender} setRerender={setRerender} />
-                      <div className="flex-grow">
+                      {isMobile ? (
+                        <Topbar />
+                      ) : (
+                        <Sidebar
+                          selectedPriority={selectedPriority}
+                          setSelectedPriority={setSelectedPriority}
+                          rerender={rerender}
+                        />
+                      )}
+                      <div className="mt-12 sm:mt-0 flex-grow">
                         <Routes>
                           <Route exact path="/" element={<Home />} />
                           <Route
                             path="/profile"
                             element={
-                              <Profile rerender={rerender} setRerender={setRerender} />
+                              <Profile
+                                rerender={rerender}
+                                setRerender={setRerender}
+                              />
                             }
                           />
-                          <Route path="/tasks" element={<Tasks />} />
+                          <Route
+                            path="/tasks"
+                            element={
+                              <Tasks selectedPriority={selectedPriority} />
+                            }
+                          />
                           <Route path="*" element={<Home />} />
                         </Routes>
                       </div>
-                      <MembersBar
-                        users={users}
-                        chats={chats}
-                        setSelectedChat={setSelectedChat}
-                        setChatIsOpen={setChatIsOpen}
-                      />
+                      {!isMobile && (
+                        <MembersBar
+                          users={users}
+                          chats={chats}
+                          setSelectedChat={setSelectedChat}
+                          setChatIsOpen={setChatIsOpen}
+                        />
+                      )}
                       {chatIsOpen && (
                         <Chat
                           users={users}

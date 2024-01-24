@@ -1,16 +1,18 @@
-import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Separator } from "../ui/separator";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
+import React, { useState } from "react";
+import {
+  ChevronLeftIcon,
+  Cross1Icon,
+} from "@radix-ui/react-icons";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { useSubcollection } from "@/hooks/useSubcollection";
 import Message from "./Message";
 import getInitials from "@/utils/getInitials";
 import { useFirestore } from "@/hooks/useFirestore";
-import { useState } from "react";
-import { ChevronLeftIcon, Cross1Icon } from "@radix-ui/react-icons";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Separator } from "../ui/separator";
+import { ScrollArea } from "../ui/scroll-area";
 import { timestamp } from "@/firebase/config";
 
 export default function Chat({
@@ -28,9 +30,7 @@ export default function Chat({
   } = useFirestore("chats");
   const [messageContent, setMessageContent] = useState("");
 
-  const chat = chats.find((chat) => {
-    return chat.id === selectedChat?.id;
-  });
+  const chat = chats.find((chat) => chat.id === selectedChat?.id);
 
   const { documents: messages } = useSubcollection(
     "chats",
@@ -40,31 +40,32 @@ export default function Chat({
     ["createdAt", "asc"]
   );
 
-  const sendMessage = async () => {
+  const sendMessage = async (event) => {
+    event.preventDefault();
     if (messageContent === "") return;
-
+  
     let chatId = chat?.id;
-
+  
     if (!chat?.id) {
       const { payload } = await createChat({
         participants: [...selectedChat.participants],
       });
       chatId = payload.id;
     }
-
+  
     await createMessage(chatId, "messages", {
       author: user.uid,
       createdAt: new Date(),
       content: messageContent,
     });
-
+  
     await updateChat(chat?.id || chatId, {
       lastMessage: {
         content: messageContent,
         createdAt: timestamp,
       }
-    })
-
+    });
+  
     setMessageContent("");
   };
 
@@ -125,16 +126,12 @@ export default function Chat({
   };
 
   return (
-    <div className="fixed bottom-32 right-[248px] h-[400px] w-80 bg-input rounded-lg p-3 border border-foreground/10 drop-shadow-xl">
+    <div className="fixed bottom-24 right-5 sm:right-[248px] h-[400px] w-[350px] sm:w-80 bg-input rounded-lg p-3 border border-foreground/10 drop-shadow-xl">
       <div className="flex flex-col h-full">
         <div className="flex items-center gap-3">
           {selectedChat && (
             <Button variant="ghost" onClick={() => setSelectedChat(null)}>
-              <ChevronLeftIcon
-                size="icon"
-                variant="ghost"
-                className="w-6 h-6"
-              />
+              <ChevronLeftIcon size="icon" variant="ghost" className="w-6 h-6" />
             </Button>
           )}
           {selectedChat && (
@@ -161,84 +158,84 @@ export default function Chat({
         <ScrollArea className="flex-grow">
           {selectedChat
             ? (messages?.length &&
-                messages?.map((message) => (
-                  <Message key={message.id} message={message} />
-                ))) || (
-                <p className="text-foreground/50">
-                  Não há mensagens para exibir.
-                </p>
-              )
+              messages?.map((message) => (
+                <Message key={message.id} message={message} />
+              ))) || (
+              <p className="text-foreground/50">
+                Não há mensagens para exibir.
+              </p>
+            )
             : chats?.map((chat) => {
-                const chatUser = users.filter(
-                  (u) =>
-                    chat.participants &&
-                    u.id !== user.uid &&
-                    chat.participants.includes(u.id)
-                );
+              const chatUser = users.filter(
+                (u) =>
+                  chat.participants &&
+                  u.id !== user.uid &&
+                  chat.participants.includes(u.id)
+              );
 
-                return (
-                  <>
-                    <div
-                      key={chat.id}
-                      onClick={() => openChat(chat, chatUser.name)}
-                      role="button"
-                    >
-                      <div className="flex gap-2.5 relative">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src="" />
-                          <AvatarFallback className="bg-primary/50">
-                            {chatUser.map((user) => (
-                              <span key={user.id}>
-                                {getInitials(user.name)}
-                              </span>
-                            ))}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
+              return (
+                <>
+                  <div
+                    key={chat.id}
+                    onClick={() => openChat(chat, chatUser.name)}
+                    role="button"
+                  >
+                    <div className="flex gap-2.5 relative">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src="" />
+                        <AvatarFallback className="bg-primary/50">
                           {chatUser.map((user) => (
-                            <p className="font-medium" key={user.id}>
-                              {user.name}
-                            </p>
+                            <span key={user.id}>
+                              {getInitials(user.name)}
+                            </span>
                           ))}
-                          {chat.lastMessage ? (
-                            <>
-                              {chat.lastMessage.content && (
-                                <p className="text-muted-foreground text-sm">
-                                  {chat.lastMessage.content}
-                                </p>
-                              )}
-                              {chat.lastMessage.createdAt && (
-                                <p className="absolute top-2 right-2 text-muted-foreground text-xs">
-                                  {formatMessageDate(
-                                    chat.lastMessage.createdAt.toDate()
-                                  )}
-                                </p>
-                              )}
-                            </>
-                          ) : (
-                            <p></p>
-                          )}
-                        </div>
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        {chatUser.map((user) => (
+                          <p className="font-medium" key={user.id}>
+                            {user.name}
+                          </p>
+                        ))}
+                        {chat.lastMessage ? (
+                          <>
+                            {chat.lastMessage.content && (
+                              <p className="text-muted-foreground text-sm">
+                                {chat.lastMessage.content}
+                              </p>
+                            )}
+                            {chat.lastMessage.createdAt && (
+                              <p className="absolute top-2 right-2 text-muted-foreground text-xs">
+                                {formatMessageDate(
+                                  chat.lastMessage.createdAt.toDate()
+                                )}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <p></p>
+                        )}
                       </div>
                     </div>
-                    <Separator className="bg-foreground/20 my-4" />
-                  </>
-                );
-              }) || (
-                <p className="text-foreground/50">
-                  Não há conversas para exibir.
-                </p>
-              )}
+                  </div>
+                  <Separator className="bg-foreground/20 my-4" />
+                </>
+              );
+            }) || (
+              <p className="text-foreground/50">
+                Não há conversas para exibir.
+              </p>
+            )}
         </ScrollArea>
-        <div className="flex gap-2.5">
+        <form onSubmit={sendMessage} className="flex gap-2.5">
           <Input
             type="text"
             placeholder="Digite aqui..."
             value={messageContent}
-            onChange={(evento) => setMessageContent(evento.target.value)}
+            onChange={(e) => setMessageContent(e.target.value)}
           />
-          <Button onClick={sendMessage}>Enviar</Button>
-        </div>
+          <Button type="submit">Enviar</Button>
+        </form>
       </div>
     </div>
   );

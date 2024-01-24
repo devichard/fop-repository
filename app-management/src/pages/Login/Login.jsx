@@ -11,8 +11,8 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async (evento) => {
-    evento.preventDefault();
+  const handleLogin = async (e) => {
+    e.preventDefault();
     login(email, password);
   };
 
@@ -45,14 +45,14 @@ export default function Login() {
               type="email"
               autoComplete="email"
               value={email}
-              onChange={(evento) => setEmail(evento.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <p className="mt-5 text-muted-foreground mb-2.5">Senha</p>
             <Input
               type="password"
               autoComplete="current-password"
               value={password}
-              onChange={(evento) => setPassword(evento.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               size="lg"

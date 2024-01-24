@@ -171,6 +171,20 @@ export const useFirestore = (coll) => {
     }
   };
 
+  const deleteSubDocument = async (docId, subcoll, subDocId) => {
+    dispatch ({ type: "IS_PENDING" });
+
+    try {
+      const subDocRef = doc(db, `${coll}/${docId}/${subcoll}`, subDocId);
+      await deleteDoc(subDocRef);
+      dispatchIfNotCancelled({ type: "DELETED_DOCUMENT" });
+      return { type: "SUCCESS", payload: "" };
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      return { type: "ERROR", payload: err.message };
+    }
+  };
+
   const updateSubDocument = async (docId, subcoll, subDocId, updates) => {
     dispatch({ type: "IS_PENDING" });
     try {
@@ -200,6 +214,7 @@ export const useFirestore = (coll) => {
     updateDocument,
     addSubDocument,
     updateSubDocument,
+    deleteSubDocument,
     response,
     serverTimestamp,
   };
