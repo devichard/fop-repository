@@ -1,45 +1,40 @@
+import React, { Component } from 'react';
 
-const Equipe = (props) => {
-  return (
-    <div>
-      <Sobre nome={props.nome} cargo={props.cargo} idade={props.idade} />
-      <Social fb={props.facebook} />
-      <hr/>
-    </div>
-  );
+class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      nome: 'Arthur',
+      contador: 0
+    };
+
+    this.aumentar = this.aumentar.bind(this);
+  }
+
+  aumentar(){
+    let state = this.state;
+    state.contador += +1;
+    this.setState(state)
+  }
+
+  diminuir(){
+    console.log('Deu bom papai!')
+  }
+
+  render() {
+    return (
+      <div>
+        <h2>Contador</h2>
+        <h3> <button onClick={this.diminuir}>-</button>
+          {this.state.contador}
+          <button onClick={this.aumentar}>+</button> </h3>
+      </div>
+    );
+  }
 }
 
-const Sobre = (props) => {
-  return (
-    <div>
-      <h2>Olá! Me chamo {props.nome}.  </h2>
-      <h3>Meu cargo é: {props.cargo} </h3>
-      <h3>E tenho {props.idade} anos </h3>
-    </div>
-  );
-}
-
-const Social = (props) => {
-  return (
-    <div>
-      <a href={props.fb}>Facebook </a>
-      <a>Instagram </a>
-      <a>LinkedIn </a>
-    </div>
-  );
-}
 
 
-function App() {
-  return (
-    <div>
-      <h1>Conheça nossa equipe</h1>
-      <Equipe nome="Arthur" cargo="Desenvolvedor" idade="22" 
-          facebook="https://facebook.com.br" />
-      <Equipe nome="Larissa" cargo="Administrativo" idade="22" />
-      <Equipe nome="Mariana" cargo="Copa" idade="22" />
-    </div>
-  );
-}
 
 export default App;
